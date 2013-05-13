@@ -1,0 +1,33 @@
+#!/usr/bin/env node
+/**
+ * Example:
+ * wg-sitemap -m ../micloud.github.com/mdfiles/ -o ../micloud.github.com/site-map.xml
+ */
+var fs = require('fs')
+  , nu = require('nodeutil')
+  , util = require('util')
+  , p = require('commander')
+  , _ = require('underscore')
+  , wikitpage = require('../lib/wikitpage')
+  , logger = require('../lib/logger')
+  , pkginfo = JSON.parse(fs.readFileSync(__dirname + '/../package.json'))
+  , ver = pkginfo.version
+
+p.version(ver)
+  .option('-o, --outfilepath <outfilepath>', 'Output file path')
+  .option('-m, --mdfolder <mdfolder>', 'The md files folder')
+  .option('-c, --cfg <cfg>', 'The tree config path that contents with json format')
+  .parse(process.argv);
+
+
+var sitemappath = p.outfilepath || logger.quitlog('Need to specify the output file path, see -o or --outfilepath') //'../site-map.xml'
+var mdfilepath = p.mdfolder || logger.quitlog('Need to specify the md file folder, see -m or --mdfolder') //'../mdfiles';
+
+// Site map template layout
+var tpl = '<?xml version="1.0" encoding="UTF-8"?> <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"> %s </urlset>'; 
+  //fs.readFileSync(tplpath, 'utf8');
+// Site map subset layout
+var map = '<url><loc>%s</loc></url>';
+
+// Start to convert site map
+wikitpage.toSiteMap(mdfilepath, sitemappath, tpl, map);

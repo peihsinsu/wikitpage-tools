@@ -1,0 +1,55 @@
+#!/usr/bin/env node
+/**
+ * Author: Simon Su
+ * Description: Convert the markdown files to html and add to rss feed, it can help the google search to index your pages
+ * Date: see github log
+ * Example: 
+ * wg-rss -m ../micloud.github.com/mdfiles -c ../micloud.github.com/javascripts/tree.json -f ../micloud.github.com/feeds.xml -t ../micloud.github.com/tools/template.html
+ */
+var fs = require('fs')
+  , nu = require('nodeutil')
+  , util = require('util')
+  , marked = require('marked')
+  , p = require('commander')
+  , _ = require('underscore')
+  , wikitpage = require('../lib/wikitpage')
+  , logger = require('../lib/logger')
+  , pkginfo = JSON.parse(fs.readFileSync(__dirname + '/../package.json'))
+  , ver = pkginfo.version
+
+p.version(ver)
+  .option('-s, --site <site>', 'Site, the rss use this parameter to complete relation links')
+  .option('-f, --feedpath <feedpath>', 'Feeds output path')
+  .option('-t, --tplpath <tplpath>', 'Template file path')
+  .option('-i, --title <title>', 'Title string')
+  .option('-d, --descript <descript>', 'Feeds description')
+  .option('-a, --author <author>', 'The author information')
+  .option('-m, --mdfolder <mdfolder>', 'The md files folder')
+  .option('-c, --cfg <cfg>', 'The tree config path that contents with json format')
+  .parse(process.argv);
+
+/**
+ * Configuration
+ * SITE: the site address that will append to related link path, it helps feeds reader to locate the real resources
+ * FEEDS_FILE_PATH: the output feeds file path
+ */
+var SITE = p.site || logger.quitlog('Need specify the site url, see -s or --site')
+  , feedsfilepath = p.feedpath || 'feeds.xml'
+
+var feedCfg = {
+        title: p.title || 'Wikitpage RSS',
+        description: p.descript || 'Feeds for wikitpage',
+        feed_url: SITE + '/feeds.xml',
+        site_url: SITE,
+        image_url: SITE + '/icon.png',
+        author: p.author || 'Wikitpage'
+    };
+
+var mdfilefolder = p.mdfolder || logger.quitlog('md file folder need specify, check parameter from -m or --mdfolder');
+var tplpath = p.tplpath || __dirname + '/../tpls/template.html' || logger.quitlog('template file need specify, check parameter from -t or --tplfile') 
+var tpl = fs.readFileSync(tplpath , 'utf8');
+var treeCfgPath = p.cfg || logger.quitlog('tree config not found, check parameter from -c or --cfg') //ex: '../javascripts/tree.json'
+var treeCfg = JSON.parse(fs.readFileSync(treeCfgPath));
+
+wikitpage.toRss(treeCfg, feedsfilepath, feedCfg, mdfilefolder, tpl);
+

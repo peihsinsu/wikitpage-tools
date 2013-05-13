@@ -1,0 +1,48 @@
+{
+  "name": "wikitpage",
+  "description": "Utility for Wikitpage",
+  "version": "0.0.1",
+  "author": {
+    "name": "Simon Su",
+    "email": "simonsu.mail@gmail.com"
+  },
+  "contributors": [
+    {
+      "name": "Simon Su",
+      "email": "simonsu.mail@gmail.com"
+    }
+  ],
+  "dependencies": {
+    "underscore":"*",
+    "log4js":"*",
+    "marked":"*",
+    "json2tree":"*",
+    "rss":"*",
+    "commander":"*"
+  },
+  "keywords": [
+    "http","server","web"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/peihsinsu/wikitpage-tools"
+  },
+  "main": "index",
+  "bin": {
+    "wg-rss":"bin/wg-rss",
+    "wg-html":"bin/wg-html",
+    "wg-onepage":"bin/wg-onepage",
+    "wg-tree":"bin/wg-tree"
+  },
+  "engines": {
+    "node": ">= 0.8.14"
+  },
+  "directories": {
+    "bin": "./bin",
+    "lib": "./lib"
+  },
+  "optionalDependencies": {},
+  "_engineSupported": true,
+  "_defaultsLoaded": true,
+  "_from": "Simon"
+}

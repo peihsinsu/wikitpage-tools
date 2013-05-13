@@ -1,0 +1,33 @@
+#!/usr/bin/env node
+/**
+ * Example: 
+ * wg-onepage -o ../micloud.github.com/onepage.html -m ../micloud.github.com/mdfiles/ -c ../micloud.github.com/javascripts/tree.json -t ../micloud.github.com/tools/template.html
+ */
+var fs = require('fs')
+  , nu = require('nodeutil')
+  , util = require('util')
+  , marked = require('marked')
+  , p = require('commander')
+  , _ = require('underscore')
+  , wikitpage = require('../lib/wikitpage')
+  , logger = require('../lib/logger')
+  , pkginfo = JSON.parse(fs.readFileSync(__dirname + '/../package.json'))
+  , ver = pkginfo.version
+
+p.version(ver)
+  .option('-o, --outfilepath <outfilepath>', 'Output file path')
+  .option('-t, --tplpath <tplpath>', 'Template file path')
+  .option('-m, --mdfolder <mdfolder>', 'The md files folder')
+  .option('-c, --cfg <cfg>', 'The tree config path that contents with json format')
+  .parse(process.argv);
+
+
+// Configures
+var path = p.mdfolder || logger.quitlog('Need to specify the md file folder, see -m or --mdfolder') //'../mdfiles'
+  , outputpath = p.outfilepath || logger.quitlog('Need to specify the output file path, see -o or --outfilepath') //'../onepage.html'
+  , tplpath = p.tplpath || __dirname +'/../tpls/template.html' || logger.quitlog('Need specify the template file path, see -t of --tplpath') //
+  , treeCfg = p.cfg || logger.quitlog('Need to specify the menu tree config path, see -c or --cfg') //'../javascripts/tree.json'
+
+// Start to convert markdowns to onepage html
+wikitpage.onepage(treeCfg, path, outputpath, tplpath);
+

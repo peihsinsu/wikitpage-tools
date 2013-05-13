@@ -1,0 +1,25 @@
+#!/usr/bin/env node
+/**
+ * Example: 
+ * wg-html -m ../micloud.github.com/mdfiles/ -o ../micloud.github.com/html/ -t ../micloud.github.com/tools/template-single-page.html
+ */
+var fs = require('fs')
+  , p = require('commander')
+  , _ = require('underscore')
+  , pkginfo = JSON.parse(fs.readFileSync(__dirname + '/../package.json'))
+  , ver = pkginfo.version
+  , logger = require('../lib/logger')
+  , wikitpage = require('../lib/wikitpage')
+
+p.version(ver)
+  .option('-o, --outfilepath <outfilepath>', 'The output html files path')
+  .option('-m, --mdfolder <mdfolder>', 'The md file folder')
+  .option('-t, --tplpath <tplpath>', 'The page template path')
+  .parse(process.argv);
+
+var htmlpath = p.outfilepath || logger.quitlog('Need specify html output folder, see -o or --output') //'../html'
+  , mdfilepath = p.mdfolder || logger.quitlog('Need specify md folder, see -m or --mdfolder') //'../mdfiles'
+  , pageTemplate = p.tplpath || __dirname + '/../tpls/template-single-page.html' || logger.quitlog('Need specify template file path, see -t or --tplpath') 
+
+wikitpage.mds2html(mdfilepath, htmlpath, pageTemplate);
+

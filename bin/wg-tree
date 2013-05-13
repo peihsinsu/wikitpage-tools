@@ -1,0 +1,31 @@
+#!/usr/bin/env node
+/**
+ * Example:
+ * wg-tree -o ../micloud.github.com/tree.html -c ../micloud.github.com/javascripts/tree.json
+ */
+var fs = require('fs')
+  , util = require('util')
+  , nu = require('nodeutil')
+  , log = nu.logger.getInstance()
+  , logger = require('../lib/logger')
+  , wikitpage = require('../lib/wikitpage')
+  , p = require('commander')
+  , pkginfo = JSON.parse(fs.readFileSync(__dirname + '/../package.json'))
+  , ver = pkginfo.version
+
+p.version(ver)
+  .option('-o, --outfilepath <outfilepath>', 'The output tree html files path')
+  .option('-c, --cfg <cfg>', 'The tree configure file path, that content need be json format')
+  .parse(process.argv);
+
+
+// Configure the tree data path and the output file path
+var path = p.cfg || logger.quitlog('Need specify the tree config file path, see -c or --cfg') // '../javascripts/tree.json'
+  , out = p.outfilepath || logger.quitlog('Need specify output file path, see -o or --outfilepath')  //'../tree.html';
+
+// Prepare the json data
+var jsonCfg = JSON.parse(fs.readFileSync(path, "utf-8"));
+
+// Start translate
+wikitpage.json2ultree(jsonCfg, out);
+
